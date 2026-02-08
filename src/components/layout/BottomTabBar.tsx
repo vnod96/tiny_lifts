@@ -1,11 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { Dumbbell, History, TrendingUp, Settings } from 'lucide-react';
+import { Dumbbell, History, TrendingUp } from 'lucide-react';
 
 const tabs = [
   { to: '/', label: 'Log', icon: Dumbbell },
   { to: '/history', label: 'History', icon: History },
   { to: '/progress', label: 'Progress', icon: TrendingUp },
-  { to: '/settings', label: 'Settings', icon: Settings },
 ] as const;
 
 export function BottomTabBar() {

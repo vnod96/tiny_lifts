@@ -4,7 +4,6 @@ import { BottomTabBar } from './components/layout/BottomTabBar';
 import { LogPage } from './pages/LogPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { ProgressPage } from './pages/ProgressPage';
-import { SettingsPage } from './pages/SettingsPage';
 
 export default function App() {
   return (
@@ -15,7 +14,6 @@ export default function App() {
             <Route path="/" element={<LogPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
           </Routes>
           <BottomTabBar />
         </div>

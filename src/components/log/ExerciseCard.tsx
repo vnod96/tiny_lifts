@@ -36,8 +36,14 @@ export function ExerciseCard({
   const exercise = store.getRow('exercises', exerciseId);
   const name = (exercise?.name as string) || 'Exercise';
 
-  const targetReps = (exercise?.target_reps as number) || 5;
+  const [targetReps, setTargetReps] = useState((exercise?.target_reps as number) || 5);
   const [targetSets, setTargetSets] = useState((exercise?.target_sets as number) || 5);
+
+  const handleRepsChange = (v: number) => {
+    setTargetReps(v);
+    store.setCell('exercises', exerciseId, 'target_reps', v);
+    onRepsChange(v); // Also update the current input value
+  };
 
   const handleSetsChange = (v: number) => {
     setTargetSets(v);
@@ -57,14 +63,6 @@ export function ExerciseCard({
         <div className="flex items-center gap-2 ml-auto mr-3">
           <span className="text-xs text-atlas-text-muted">
             <span className="font-semibold text-atlas-text">{currentWeight}</span>kg
-          </span>
-          <span className="text-atlas-border text-xs">·</span>
-          <span className="text-xs text-atlas-text-muted">
-            <span className="font-semibold text-atlas-text">{currentReps}</span>reps
-          </span>
-          <span className="text-atlas-border text-xs">·</span>
-          <span className="text-xs text-atlas-text-muted">
-            <span className="font-semibold text-atlas-text">{targetSets}</span>sets
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -105,10 +103,10 @@ export function ExerciseCard({
             horizontal
           />
           <NumberStepper
-            value={currentReps}
-            onChange={onRepsChange}
+            value={targetReps}
+            onChange={handleRepsChange}
             step={1}
-            min={0}
+            min={1}
             max={30}
             label="Reps"
             horizontal
