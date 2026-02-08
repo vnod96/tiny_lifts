@@ -46,7 +46,7 @@ export function WorkoutSelector({ onSelect }: Props) {
           >
             {/* Letter badge */}
             <div className="w-12 h-12 rounded-xl bg-atlas-accent/15 text-atlas-accent flex items-center justify-center text-xl font-bold shrink-0
-                            transition-transform duration-200 group-hover:scale-110">
+                            transition-transform duration-200">
               {letter}
             </div>
 
@@ -66,8 +66,8 @@ export function WorkoutSelector({ onSelect }: Props) {
               </div>
             </div>
 
-            {/* Arrow with hover animation */}
-            <ChevronRight size={20} className="text-atlas-text-muted shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+            {/* Arrow */}
+            <ChevronRight size={20} className="text-atlas-text-muted shrink-0 transition-transform duration-200" />
           </button>
         );
       })}

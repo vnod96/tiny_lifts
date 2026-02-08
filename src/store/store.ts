@@ -36,6 +36,7 @@ export function buildStore(): {
       muscle_group: { type: 'string', default: '' },
       target_reps: { type: 'number', default: 5 },
       target_sets: { type: 'number', default: 5 },
+      default_weight: { type: 'number', default: 20 },
     },
     workout_exercises: {
       workout_id: { type: 'string' },
@@ -139,6 +140,7 @@ export function seedIfEmpty(store: Store) {
     muscle_group: 'Quadriceps, Glutes',
     target_reps: 5,
     target_sets: 5,
+    default_weight: 20,
   });
   store.setRow('exercises', EXERCISE_IDS.bench, {
     name: 'Bench Press',
@@ -146,6 +148,7 @@ export function seedIfEmpty(store: Store) {
     muscle_group: 'Chest, Triceps',
     target_reps: 5,
     target_sets: 5,
+    default_weight: 20,
   });
   store.setRow('exercises', EXERCISE_IDS.deadlift, {
     name: 'Deadlift',
@@ -153,6 +156,7 @@ export function seedIfEmpty(store: Store) {
     muscle_group: 'Back, Hamstrings',
     target_reps: 5,
     target_sets: 1,
+    default_weight: 40,
   });
   store.setRow('exercises', EXERCISE_IDS.ohp, {
     name: 'Overhead Press',
@@ -160,6 +164,7 @@ export function seedIfEmpty(store: Store) {
     muscle_group: 'Shoulders, Triceps',
     target_reps: 5,
     target_sets: 5,
+    default_weight: 20,
   });
   store.setRow('exercises', EXERCISE_IDS.row, {
     name: 'Barbell Row',
@@ -167,6 +172,7 @@ export function seedIfEmpty(store: Store) {
     muscle_group: 'Back, Biceps',
     target_reps: 5,
     target_sets: 5,
+    default_weight: 20,
   });
 
   // Workouts

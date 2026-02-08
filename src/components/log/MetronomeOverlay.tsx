@@ -1,4 +1,5 @@
-import { Timer, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { MetronomeIcon } from '../shared/MetronomeIcon';
 import type { MetronomeState } from '../../hooks/useMetronome';
 
 interface Props {
@@ -15,9 +16,12 @@ export function MetronomeOverlay({ metronome }: Props) {
       <div className="animate-fade-slide-up max-w-lg mx-auto mt-2 bg-atlas-surface border border-atlas-border rounded-2xl shadow-2xl elevation-3 p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Timer size={16} className="text-atlas-accent" />
+            <MetronomeIcon size={16} className="text-atlas-accent" />
             <span className="text-sm font-semibold text-atlas-text">
               5/5 Cadence
+            </span>
+            <span className="text-xs text-atlas-text-muted tabular-nums">
+              Rep {metronome.currentRep}/{metronome.totalReps}
             </span>
           </div>
           <button

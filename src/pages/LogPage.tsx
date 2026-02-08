@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { nanoid } from 'nanoid';
-import { Timer } from 'lucide-react';
+import { MetronomeIcon } from '../components/shared/MetronomeIcon';
 import { PageShell } from '../components/layout/PageShell';
 import { WorkoutSelector } from '../components/log/WorkoutSelector';
 import { ExerciseCard } from '../components/log/ExerciseCard';
@@ -119,7 +119,10 @@ export function LogPage() {
     (exerciseId: string) => {
       if (!sessionId) return;
 
-      const input = inputState[exerciseId] || { weight: 20, reps: 5 };
+      const ex = store.getRow('exercises', exerciseId);
+      const defaultWeight = (ex?.default_weight as number) || 20;
+      const defaultReps = (ex?.target_reps as number) || 5;
+      const input = inputState[exerciseId] || { weight: defaultWeight, reps: defaultReps };
       const existing = loggedSets[exerciseId] || [];
       const setNumber = existing.length + 1;
 
@@ -146,7 +149,14 @@ export function LogPage() {
     [sessionId, inputState, loggedSets, store, restTimer],
   );
 
-  const getInput = (eid: string) => inputState[eid] || { weight: 20, reps: 5 };
+  const getInput = (eid: string) => {
+    if (inputState[eid]) return inputState[eid];
+    const ex = store.getRow('exercises', eid);
+    return {
+      weight: (ex?.default_weight as number) || 20,
+      reps: (ex?.target_reps as number) || 5,
+    };
+  };
   const setWeight = (eid: string, w: number) =>
     setInputState((prev) => ({
       ...prev,
@@ -172,7 +182,7 @@ export function LogPage() {
             }`}
             aria-label="Toggle Metronome"
           >
-            <Timer size={18} />
+            <MetronomeIcon size={18} />
           </button>
         ) : undefined
       }
@@ -180,7 +190,7 @@ export function LogPage() {
       <MetronomeOverlay metronome={metronome} />
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4 stagger-children">
-        {/* Workout selector cards — tapping starts the workout */}
+        {/* Workout selector cards — tap to start */}
         {!sessionActive && (
           <WorkoutSelector onSelect={startSession} />
         )}

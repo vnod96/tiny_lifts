@@ -8,6 +8,10 @@ export interface MetronomeState {
   progress: number;
   /** Total elapsed seconds in current phase */
   elapsed: number;
+  /** Current rep number (1-based, increments each up+down cycle) */
+  currentRep: number;
+  /** Total reps to perform */
+  totalReps: number;
   isActive: boolean;
   start: () => void;
   stop: () => void;
@@ -16,16 +20,19 @@ export interface MetronomeState {
 
 const PHASE_DURATION = 5; // 5 seconds per phase
 const TICK_MS = 50; // 50ms ticks for smooth animation
+const TOTAL_REPS = 5; // 5 up+down cycles
 
 export function useMetronome(): MetronomeState {
   const [phase, setPhase] = useState<Phase>('up');
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [currentRep, setCurrentRep] = useState(1);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const phaseStartRef = useRef(Date.now());
   const currentPhaseRef = useRef<Phase>('up');
+  const currentRepRef = useRef(1);
 
   const beep = useCallback((frequency: number) => {
     try {
@@ -55,24 +62,28 @@ export function useMetronome(): MetronomeState {
     }
   }, []);
 
-  const start = useCallback(() => {
-    clearTimer();
-    currentPhaseRef.current = 'up';
-    phaseStartRef.current = Date.now();
-    setPhase('up');
-    setProgress(0);
-    setElapsed(0);
-    setIsActive(true);
-    beep(880); // High beep for UP start
-  }, [clearTimer, beep]);
-
   const stop = useCallback(() => {
     clearTimer();
     setIsActive(false);
     setProgress(0);
     setElapsed(0);
     setPhase('up');
+    setCurrentRep(1);
+    currentRepRef.current = 1;
   }, [clearTimer]);
+
+  const start = useCallback(() => {
+    clearTimer();
+    currentPhaseRef.current = 'up';
+    currentRepRef.current = 1;
+    phaseStartRef.current = Date.now();
+    setPhase('up');
+    setProgress(0);
+    setElapsed(0);
+    setCurrentRep(1);
+    setIsActive(true);
+    beep(880); // High beep for UP start
+  }, [clearTimer, beep]);
 
   const toggle = useCallback(() => {
     if (isActive) stop();
@@ -91,19 +102,43 @@ export function useMetronome(): MetronomeState {
       setElapsed(Math.min(dt, PHASE_DURATION));
 
       if (dt >= PHASE_DURATION) {
-        // Switch phase
-        const next: Phase = currentPhaseRef.current === 'up' ? 'down' : 'up';
+        const wasPhase = currentPhaseRef.current;
+        const next: Phase = wasPhase === 'up' ? 'down' : 'up';
+
+        // A full rep completes at the end of a "down" phase
+        if (wasPhase === 'down') {
+          const finishedRep = currentRepRef.current;
+          if (finishedRep >= TOTAL_REPS) {
+            // All reps done — auto-stop
+            stop();
+            return;
+          }
+          // Move to next rep
+          currentRepRef.current = finishedRep + 1;
+          setCurrentRep(finishedRep + 1);
+        }
+
         currentPhaseRef.current = next;
         phaseStartRef.current = now;
         setPhase(next);
         setProgress(0);
         setElapsed(0);
-        beep(next === 'up' ? 880 : 440); // High for up, low for down
+        beep(next === 'up' ? 880 : 440);
       }
     }, TICK_MS);
 
     return clearTimer;
-  }, [isActive, clearTimer, beep]);
+  }, [isActive, clearTimer, beep, stop]);
 
-  return { phase, progress, elapsed, isActive, start, stop, toggle };
+  return {
+    phase,
+    progress,
+    elapsed,
+    currentRep,
+    totalReps: TOTAL_REPS,
+    isActive,
+    start,
+    stop,
+    toggle,
+  };
 }

@@ -1,4 +1,5 @@
-import { AlertTriangle, TrendingUp, Minus as MinusIcon } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, TrendingUp, Minus as MinusIcon, Pencil, X } from 'lucide-react';
 import { NumberStepper } from '../shared/NumberStepper';
 import { usePlateauDetection } from '../../hooks/usePlateauDetection';
 import { useStore } from '../../store/StoreProvider';
@@ -34,30 +35,95 @@ export function ExerciseCard({
   const { store } = useStore();
   const exercise = store.getRow('exercises', exerciseId);
   const name = (exercise?.name as string) || 'Exercise';
+
   const targetReps = (exercise?.target_reps as number) || 5;
-  const targetSets = (exercise?.target_sets as number) || 5;
+  const [targetSets, setTargetSets] = useState((exercise?.target_sets as number) || 5);
+
+  const handleSetsChange = (v: number) => {
+    setTargetSets(v);
+    store.setCell('exercises', exerciseId, 'target_sets', v);
+  };
 
   const plateau = usePlateauDetection(exerciseId);
-
   const allSetsDone = loggedSets.length >= targetSets;
+
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="animate-fade-slide-up rounded-2xl bg-atlas-surface border border-atlas-border overflow-hidden elevation-1 transition-shadow duration-300">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-atlas-border">
-        <div className="flex items-center gap-2">
-          <h3 className="font-bold text-atlas-text text-base">{name}</h3>
+        <h3 className="font-bold text-atlas-text text-base">{name}</h3>
+        <div className="flex items-center gap-2 ml-auto mr-3">
           <span className="text-xs text-atlas-text-muted">
-            {targetSets}×{targetReps}
+            <span className="font-semibold text-atlas-text">{currentWeight}</span>kg
+          </span>
+          <span className="text-atlas-border text-xs">·</span>
+          <span className="text-xs text-atlas-text-muted">
+            <span className="font-semibold text-atlas-text">{currentReps}</span>reps
+          </span>
+          <span className="text-atlas-border text-xs">·</span>
+          <span className="text-xs text-atlas-text-muted">
+            <span className="font-semibold text-atlas-text">{targetSets}</span>sets
           </span>
         </div>
-        {plateau.isPlateau && (
-          <span className="animate-scale-pop flex items-center gap-1 px-2 py-1 rounded-full bg-atlas-warning/20 text-atlas-warning text-xs font-semibold">
-            <AlertTriangle size={12} />
-            Plateau
-          </span>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {plateau.isPlateau && (
+            <span className="animate-scale-pop flex items-center gap-1 px-2 py-1 rounded-full bg-atlas-warning/20 text-atlas-warning text-xs font-semibold">
+              <AlertTriangle size={12} />
+              Plateau
+            </span>
+          )}
+          {/* Edit toggle button */}
+          {!allSetsDone && (
+            <button
+              type="button"
+              onClick={() => setEditing((prev) => !prev)}
+              className={`ripple w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 active:scale-90 ${
+                editing
+                  ? 'bg-atlas-accent text-white'
+                  : 'bg-atlas-surface-alt text-atlas-text-muted hover:text-atlas-text'
+              }`}
+              aria-label={editing ? 'Close editor' : 'Edit weight & reps'}
+            >
+              {editing ? <X size={14} /> : <Pencil size={14} />}
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Weight & Reps input — shown only when editing */}
+      {!allSetsDone && editing && (
+        <div className="px-4 pb-4 pt-3 border-b border-atlas-border/50 animate-fade-slide-up space-y-3">
+          <NumberStepper
+            value={currentWeight}
+            onChange={onWeightChange}
+            step={2.5}
+            min={0}
+            label="Weight"
+            unit="kg"
+            horizontal
+          />
+          <NumberStepper
+            value={currentReps}
+            onChange={onRepsChange}
+            step={1}
+            min={0}
+            max={30}
+            label="Reps"
+            horizontal
+          />
+          <NumberStepper
+            value={targetSets}
+            onChange={handleSetsChange}
+            step={1}
+            min={1}
+            max={10}
+            label="Sets"
+            horizontal
+          />
+        </div>
+      )}
 
       {/* Set boxes — tap the next box to log a set */}
       <div className="px-4 py-3 flex items-center gap-2">
@@ -94,30 +160,6 @@ export function ExerciseCard({
           );
         })}
       </div>
-
-      {/* Weight & Reps input — in the thumb zone */}
-      {!allSetsDone && (
-        <div className="px-4 pb-4 pt-2 border-t border-atlas-border/50 animate-fade-slide-up">
-          <div className="flex items-center justify-center gap-6">
-            <NumberStepper
-              value={currentWeight}
-              onChange={onWeightChange}
-              step={2.5}
-              min={0}
-              label="Weight"
-              unit="kg"
-            />
-            <NumberStepper
-              value={currentReps}
-              onChange={onRepsChange}
-              step={1}
-              min={0}
-              max={30}
-              label="Reps"
-            />
-          </div>
-        </div>
-      )}
 
       {/* Suggestion area */}
       {(plateau.progressionSuggestion || plateau.isPlateau) && (
