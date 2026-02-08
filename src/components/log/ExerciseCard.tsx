@@ -130,29 +130,30 @@ export function ExerciseCard({
           const logged = loggedSets.find((s) => s.setNumber === setNum);
           const isNext = !logged && loggedSets.length === i;
           const repsHit = logged ? logged.reps >= targetReps : false;
+          const canTap = isNext && !!sessionId; // Only allow tapping if session is active
 
           return (
             <button
               key={setNum}
               type="button"
-              disabled={!isNext}
-              onClick={isNext ? onLogSet : undefined}
+              disabled={!canTap}
+              onClick={canTap ? onLogSet : undefined}
               className={`flex-1 flex flex-col items-center justify-center rounded-xl py-2.5 border-2 min-h-[44px]
                 transition-all duration-200
                 ${logged
                   ? repsHit
                     ? 'animate-scale-pop bg-atlas-success/15 border-atlas-success text-atlas-success'
                     : 'animate-scale-pop bg-atlas-warning/15 border-atlas-warning text-atlas-warning'
-                  : isNext
+                  : canTap
                     ? 'animate-glow-pulse bg-atlas-accent/10 border-atlas-accent text-atlas-accent cursor-pointer active:scale-90'
-                    : 'bg-atlas-surface-alt/50 border-atlas-border text-atlas-text-muted cursor-default'
+                    : 'bg-atlas-surface-alt/50 border-atlas-border text-atlas-text-muted cursor-not-allowed opacity-60'
                 }`}
             >
               <span className="text-lg font-bold leading-none">
                 {logged ? logged.reps : targetReps}
               </span>
               <span className="text-[10px] mt-0.5 opacity-70">
-                {logged ? `${logged.weight}kg` : isNext ? 'TAP' : `Set ${setNum}`}
+                {logged ? `${logged.weight}kg` : canTap ? 'TAP' : `Set ${setNum}`}
               </span>
             </button>
           );

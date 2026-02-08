@@ -79,7 +79,7 @@ export function LogPage() {
       setElapsedStr(`${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
     }, 1000);
     return () => clearInterval(iv);
-  }, [sessionActive, sessionStart]);
+  }, [sessionStart]);
 
   // Start session — called directly when a workout card is tapped
   const startSession = useCallback(
@@ -95,7 +95,7 @@ export function LogPage() {
       });
       setSessionId(id);
       setSessionActive(true);
-      setSessionStart(Date.now());
+      // setSessionStart(Date.now());
       setInputState({});
     },
     [store],
@@ -213,14 +213,22 @@ export function LogPage() {
           </div>
         )}
 
-        {/* End session button */}
+        {/* Start and End session buttons */}
         {sessionActive && (
-          <button
-            onClick={endSession}
-            className="animate-fade-slide-up ripple w-full h-12 rounded-2xl bg-atlas-danger/20 text-atlas-danger font-semibold text-base active:bg-atlas-danger/30 active:scale-[0.98] transition-all duration-200 border border-atlas-danger/30"
-          >
-            End Workout
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setSessionStart(Date.now())}
+              className="animate-fade-slide-up ripple flex-1 h-12 rounded-2xl bg-atlas-success/20 text-atlas-success font-semibold text-base active:bg-atlas-success/30 active:scale-[0.98] transition-all duration-200 border border-atlas-success/30"
+            >
+              Start Workout
+            </button>
+            <button
+              onClick={endSession}
+              className="animate-fade-slide-up ripple flex-1 h-12 rounded-2xl bg-atlas-danger/20 text-atlas-danger font-semibold text-base active:bg-atlas-danger/30 active:scale-[0.98] transition-all duration-200 border border-atlas-danger/30"
+            >
+              End Workout
+            </button>
+          </div>
         )}
 
         {/* Volume comparison */}
