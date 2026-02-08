@@ -8,7 +8,7 @@ import { ProgressPage } from './pages/ProgressPage';
 export default function App() {
   return (
     <StoreProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <div className="flex flex-col h-full bg-atlas-bg">
           <Routes>
             <Route path="/" element={<LogPage />} />
