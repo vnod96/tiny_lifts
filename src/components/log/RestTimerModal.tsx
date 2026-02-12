@@ -45,10 +45,10 @@ export function RestTimerModal({ timer, onDismiss }: Props) {
       {/* Bottom sheet — sits above the 64px tab bar */}
       <div
         className={`fixed inset-x-0 bottom-16 z-45 transition-transform duration-300 ease-out pb-safe ${
-          visible ? 'translate-y-0' : 'translate-y-[calc(100%+4rem)]'
+          visible ? 'translate-y-0 opacity-100' : 'translate-y-[calc(100%+4rem)] opacity-0'
         }`}
       >
-        <div className="max-w-lg mx-auto bg-atlas-surface rounded-3xl shadow-2xl mx-2">
+        <div className="max-w-lg mx-auto bg-atlas-surface rounded-3xl shadow-2xl">
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-atlas-border" />

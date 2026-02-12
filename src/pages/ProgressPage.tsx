@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { PageShell } from '../components/layout/PageShell';
 import { ExerciseProgressCard } from '../components/progress/ExerciseProgressCard';
 import { PlateauBanner } from '../components/progress/PlateauBanner';
+import { ContributionCalendar } from '../components/progress/ContributionCalendar';
 import { useStore } from '../store/StoreProvider';
 import { usePlateauDetection } from '../hooks/usePlateauDetection';
 
@@ -31,6 +32,9 @@ export function ProgressPage() {
   return (
     <PageShell title="Progress">
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4 stagger-children">
+        {/* Contribution calendar */}
+        <ContributionCalendar />
+
         {/* Plateau banners at top */}
         {exercises.map((ex) => (
           <PlateauCheck key={`plateau-${ex.id}`} exerciseId={ex.id} exerciseName={ex.name} />
