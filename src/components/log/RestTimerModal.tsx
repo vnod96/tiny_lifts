@@ -33,10 +33,11 @@ export function RestTimerModal({ timer, onDismiss }: Props) {
   };
 
   return (
+    visible && (
     <>
       {/* Backdrop — above content but below tab bar */}
       <div
-        className={`fixed inset-0 bottom-16 z-40 bg-black/50 transition-opacity duration-300 ${
+        className={`fixed overscroll-contain inset-0 bottom-16 z-40 bg-black/50 transition-opacity duration-300 ${
           visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onDismiss}
@@ -44,7 +45,7 @@ export function RestTimerModal({ timer, onDismiss }: Props) {
 
       {/* Bottom sheet — sits above the 64px tab bar */}
       <div
-        className={`fixed inset-x-0 bottom-16 z-45 transition-transform duration-300 ease-out pb-safe ${
+        className={`fixed overscroll-contain inset-x-0 bottom-16 z-45 transition-transform duration-300 ease-out pb-safe ${
           visible ? 'translate-y-0 opacity-100' : 'translate-y-[calc(100%+4rem)] opacity-0'
         }`}
       >
@@ -147,5 +148,5 @@ export function RestTimerModal({ timer, onDismiss }: Props) {
         </div>
       </div>
     </>
-  );
+  ))
 }
